@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Coroutines-Example</string>
+    <string name="city">City</string>
+    <string name="blagoveshchensk">Blagoveshchensk</string>
+    <string name="temperature">Temperature</string>
+    <string name="download">Download</string>
 </resources>
