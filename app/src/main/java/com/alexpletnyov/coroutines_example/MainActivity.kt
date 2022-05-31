@@ -2,6 +2,8 @@ package com.alexpletnyov.coroutines_example
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.core.view.isVisible
 import com.alexpletnyov.coroutines_example.databinding.ActivityMainBinding
@@ -36,20 +38,26 @@ class MainActivity : AppCompatActivity() {
 
 	private fun loadTemperature(city: String, callback: (Int) -> Unit) {
 		thread {
-			Toast.makeText(
-				this,
-				"Load temperature for city: $city",
-				Toast.LENGTH_SHORT
-			).show()
+			runOnUiThread {
+				Toast.makeText(
+					this,
+					"Load temperature for city: $city",
+					Toast.LENGTH_SHORT
+				).show()
+			}
 			Thread.sleep(5000)
-			callback.invoke(17)
+			runOnUiThread {
+				callback.invoke(17)
+			}
 		}
 	}
 
 	private fun loadCity(callback: (String) -> Unit) {
 		thread {
 			Thread.sleep(5000)
-			callback.invoke("Blagoveshchensk")
+			runOnUiThread {
+				callback.invoke("Blagoveshchensk")
+			}
 		}
 	}
 }
