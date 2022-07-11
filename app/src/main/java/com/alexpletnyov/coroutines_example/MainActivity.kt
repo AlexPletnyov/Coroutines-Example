@@ -2,10 +2,13 @@ package com.alexpletnyov.coroutines_example
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.alexpletnyov.coroutines_example.databinding.ActivityMainBinding
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -21,17 +24,22 @@ class MainActivity : AppCompatActivity() {
 		binding.buttonLoad.setOnClickListener {
 			binding.progress.isVisible = true
 			binding.buttonLoad.isEnabled = false
-			val jobCity = lifecycleScope.launch {
-				val city = loadCity()
-				binding.tvLocation.text = city
+			val deferredCity: Deferred<String> = lifecycleScope.async {
+				loadCity()
 			}
-			val jobTemp = lifecycleScope.launch {
-				val temp = loadTemperature()
-				binding.tvTemperature.text = temp.toString()
+			val deferredTemp: Deferred<Int> = lifecycleScope.async {
+				loadTemperature()
 			}
 			lifecycleScope.launch {
-				jobCity.join()
-				jobTemp.join()
+				val city = deferredCity.await()
+				binding.tvLocation.text = city
+				val temp = deferredTemp.await()
+				binding.tvTemperature.text = temp.toString()
+				Toast.makeText(
+					this@MainActivity,
+					"City: $city, Temp: $temp",
+					Toast.LENGTH_SHORT
+				).show()
 				binding.progress.isVisible = false
 				binding.buttonLoad.isEnabled = true
 			}
